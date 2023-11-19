@@ -297,11 +297,64 @@ nameserver 192.168.122.1
 Lama waktu DHCP server meminjamkan alamat IP kepada Client yang melalui Switch3 selama 3 menit sedangkan pada client yang melalui Switch4 selama 12 menit. Dengan waktu maksimal yang dialokasikan untuk peminjaman alamat IP selama 96 menit 
 
 ### Explanation
+- In Himmel, edit /etc/dhcp/dhcpd.conf and edit the default-lease-time dan max-lease-time:
+```
+subnet 192.232.3.0 netmask 255.255.255.0 {
+        range 192.232.3.16 192.232.3.32;
+        range 192.232.3.64 192.232.3.80;
+        option routers 192.232.3.1;
+        option broadcast-address 192.232.3.255;
+        option domain-name-servers 192.232.1.3; # DNS Server
+        default-lease-time 180;
+        max-lease-time 5760;
+}
+
+subnet 192.232.4.0 netmask 255.255.255.0 {
+        range 192.232.4.12 192.232.4.20;
+        range 192.232.4.160 192.232.4.168;
+        option routers 192.232.4.1;
+        option broadcast-address 192.232.4.255;
+        option domain-name-servers 192.232.1.3;
+        default-lease-time 720;
+        max-lease-time 5760;
+}
+```
+- Restart server
+```
+service isc-dhcp-server restart
+```
+- Check server status
+```
+service isc-dhcp-server status
+```
 
 ## Soal-6
 Pada masing-masing worker PHP, lakukan konfigurasi virtual host untuk website berikut dengan menggunakan php 7.3. 
 
 ### Explanation
+- Install web server nginx dan php-fpm in each of the PHP worker (Lawine, Linie, Lugner)
+```
+apt-get update && apt-get install nginx php php-fpm
+```
+- Configure virtual host in /etc/apache2/sites-available/:
+```
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    ServerName granz.channel.I08.com
+    ServerAlias www.granz.channel.I08.com
+    DocumentRoot /var/www/granz.channel.yyy.com
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+- Install PHP:
+```
+apt-get install php3.7
+```
+```
+php -v
+```
+
 
 ## Soal-7
 Kepala suku dari Bredt Region memberikan resource server sebagai berikut:
