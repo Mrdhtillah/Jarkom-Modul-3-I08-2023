@@ -364,3 +364,12 @@ c. Lugner 1GB, 1vCPU, dan 25 GB SSD.
 aturlah agar Eisen dapat bekerja dengan maksimal, lalu lakukan testing dengan 1000 request dan 100 request/second. 
 
 ### Explanation
+
+## Soal-8
+### Explanation
+
+## Soal-9
+### Explanation
+
+## Soal-10
+### Explanation
