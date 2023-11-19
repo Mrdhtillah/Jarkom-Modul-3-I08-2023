@@ -155,6 +155,11 @@ Kali ini, kalian diminta untuk melakukan register domain berupa riegel.canyon.yy
 Lakukan konfigurasi sesuai dengan peta yang sudah diberikan.
 
 ### Explanation
+- Make the topology based on the picture below:
+<img src="./img/0.png" width="500">
+
+- Modify the topology with the configuration below:
+<img src="./img/1.png" width="500">
 
 ## Soal-2
 Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32 dan [prefix IP].3.64 - [prefix IP].3.80 
