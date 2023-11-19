@@ -372,29 +372,51 @@ ip a
 Pada masing-masing worker PHP, lakukan konfigurasi virtual host untuk website berikut dengan menggunakan php 7.3. 
 
 ### Explanation
-- Install web server nginx dan php-fpm in each of the PHP worker (Lawine, Linie, Lugner)
+- Set up download and server configurations on Eisen (Load Balancer) as shown below:
 ```
-apt-get update && apt-get install nginx php php-fpm
-```
-- Configure virtual host in /etc/apache2/sites-available/:
-```
-<VirtualHost *:80>
-    ServerAdmin webmaster@localhost
-    ServerName granz.channel.I08.com
-    ServerAlias www.granz.channel.I08.com
-    DocumentRoot /var/www/granz.channel.yyy.com
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-```
-- Install PHP:
-```
-apt-get install php3.7
-```
-```
-php -v
-```
+echo nameserver 192.168.122.1 > /etc/resolv.conf
+apt-get update
+apt-get install bind9 nginx -y
 
+echo '
+ upstream myweb  {
+        server 192.232.3.4; #IP Lawine
+        server 192.232.3.3; #IP Linie
+        server 192.232.3.2; #IP Lugner
+ }
+
+ server {
+        listen 80;
+        server_name granz.channel.I08.com;
+
+        location / {
+        proxy_pass http://myweb;
+        }
+ }' > /etc/nginx/sites-available/lb-jarkom
+
+ln -s /etc/nginx/sites-available/lb-jarkom /etc/nginx/sites-enabled
+rm -rf /etc/nginx/sites-enabled/default
+
+service nginx restart
+nginx -t
+```
+- Configure each PHP Worker (Lawine, Linie, Lugner), then install, download the website resources to be used, and set up the page:
+```
+echo nameserver 192.168.122.1 > /etc/resolv.conf
+apt-get update
+apt-get install lynx -y
+apt-get install wget -y
+apt-get install unzip -y
+apt-get install nginx -y
+apt-get install php7.3 -y
+apt-get install php7.3-fpm -y
+mkdir -p /var/www/granz.channel.I08
+wget --no-check-certificate 'https://drive.google.com/uc?export=download&id=1ViSkRq7SmwZgdK64eRbr5Fm1EGCTPrU1' -O /var/www/granz.channel.I08.zip
+unzip /var/www/granz.channel.I08.zip -d /var/www/granz.channel.I08
+mv /var/www/granz.channel.I08/modul-3 /var/www/granz.channel.I08
+rm -rf /var/www/granz.channel.I08.zip
+```
+- Change the internet IP to the DNS Server IP and configure sites from granz.channel.I08 using PHP 7.3
 
 ## Soal-7
 Kepala suku dari Bredt Region memberikan resource server sebagai berikut:
@@ -403,13 +425,4 @@ b. Linie, 2GB, 2vCPU, dan 50 GB SSD.
 c. Lugner 1GB, 1vCPU, dan 25 GB SSD.
 aturlah agar Eisen dapat bekerja dengan maksimal, lalu lakukan testing dengan 1000 request dan 100 request/second. 
 
-### Explanation
 
-## Soal-8
-### Explanation
-
-## Soal-9
-### Explanation
-
-## Soal-10
-### Explanation
