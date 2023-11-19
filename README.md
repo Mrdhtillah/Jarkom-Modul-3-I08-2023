@@ -366,7 +366,7 @@ iface eth0 inet dhcp
 ```
 ip a
 ```
-<img src="./img/3.png" width="500">
+<img src="./img/3.png" width="800">
 
 ## Soal-6
 Pada masing-masing worker PHP, lakukan konfigurasi virtual host untuk website berikut dengan menggunakan php 7.3. 
