@@ -417,12 +417,96 @@ mv /var/www/granz.channel.I08/modul-3 /var/www/granz.channel.I08
 rm -rf /var/www/granz.channel.I08.zip
 ```
 - Change the internet IP to the DNS Server IP and configure sites from granz.channel.I08 using PHP 7.3
+```
+echo nameserver 192.232.1.3 > /etc/resolv.conf
 
-## Soal-7
-Kepala suku dari Bredt Region memberikan resource server sebagai berikut:
-a. Lawine, 4GB, 2vCPU, dan 80 GB SSD.
-b. Linie, 2GB, 2vCPU, dan 50 GB SSD.
-c. Lugner 1GB, 1vCPU, dan 25 GB SSD.
-aturlah agar Eisen dapat bekerja dengan maksimal, lalu lakukan testing dengan 1000 request dan 100 request/second. 
+echo '
+server {
 
+        listen 80;
+
+        root /var/www/granz.channel.I08;
+
+        index index.php index.html index.htm;
+        server_name _;
+
+        location / {
+                        try_files $uri $uri/ /index.php?$query_string;
+        }
+
+        location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;
+        }
+
+location ~ /\.ht {
+                        deny all;
+        }
+
+        error_log /var/log/nginx/jarkom_error.log;
+        access_log /var/log/nginx/jarkom_access.log;
+ }' > /etc/nginx/sites-available/granz.channel.I08
+```
+- Retrieve the index from the provided resources, then pass it to the Index page for granz.channel.I08.com and create a symbolic link for granz.channel.I08.com.
+```
+echo '<!DOCTYPE html>
+<html>
+<head>
+    <title>Granz Channel Map</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Granz Channel</h1>
+        <p><?php
+            $hostname = gethostname();
+            echo "Request: $hostname<br>"; ?> </p>
+        <p>Enter your name to validate:</p>
+        <form method="POST" action="index.php">
+            <input type="text" name="name" id="nameInput">
+            <button type="submit" id="submitButton">Submit</button>
+        </form>
+        <p id="greeting"><?php
+            if(isset($_POST['name'])) {
+                $name = $_POST['name'];
+                echo "Hello, $name!";
+            }
+        ?></p>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>' > /var/www/granz.channel.I08/index.php
+
+ln -s /etc/nginx/sites-available/granz.channel.I08 /etc/nginx/sites-enabled
+rm -rf /etc/nginx/sites-enabled/default
+```
+- Restart and test
+```
+service php7.3-fpm start
+service php7.3-fpm restart
+service nginx restart
+nginx -t
+```
+- Before testing, on Heiter (DNS Server), change granz.channel.I08.com, previously registered as the IP of Lawine PHP Worker to the IP of Eisen Load Balancer
+```
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     granz.channel.I08.com. root.granz.channel.I08.com. (
+                     2023111601         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      granz.channel.I08.com.
+@       IN      A       192.232.2.3               ; IP Eisen
+www     IN      CNAME   granz.channel.I08.com.
+@       IN      AAAA    ::1
+```
+- Restart server
+```
+service bind9 restart
+```
 
