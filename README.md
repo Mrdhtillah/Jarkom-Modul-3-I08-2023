@@ -354,6 +354,19 @@ service isc-dhcp-server restart
 ```
 service isc-dhcp-server status
 ```
+### Testing
+- Change IP static to IP dynamic
+```
+echo '
+auto eth0
+iface eth0 inet dhcp
+' > /etc/network/interfaces
+```
+- Stop and start Client again, then run the following command:
+```
+ip a
+```
+<img src="./img/3.png" width="500">
 
 ## Soal-6
 Pada masing-masing worker PHP, lakukan konfigurasi virtual host untuk website berikut dengan menggunakan php 7.3. 
