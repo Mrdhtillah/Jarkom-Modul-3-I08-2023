@@ -150,6 +150,60 @@ iface eth0 inet static
 Kali ini, kalian diminta untuk melakukan register domain berupa riegel.canyon.yyy.com untuk worker Laravel dan granz.channel.yyy.com untuk worker PHP mengarah pada worker yang memiliki IP [prefix IP].x.1.
 
 ### Explanation
+- Create domain rigel.canyon.I08.com and granz.channel.I08.com in Heiter
+```
+nano /etc/bind/named.conf.local
+```
+```
+zone "rigel.canyon.I08.com" {
+	type master;
+	file "/etc/bind/jarkom/rigel.canyon.I08.com";
+};
+
+zone "granz.channel.I08.com" {
+	type master;
+	file "/etc/bind/jarkom/granz.channel.I08.com";
+};
+```
+- create reverse domain
+```
+nano /etc/bind/named.conf.local
+```
+```
+zone "3.232.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/jarkom/3.232.192.in-addr.arpa";
+};
+```
+- Restart the server
+```
+service bind9 restart
+```
+```
+subnet 192.232.1.0 netmask 255.255.255.0 {}
+subnet 192.232.2.0 netmask 255.255.255.0 {}
+
+
+subnet 192.232.3.0 netmask 255.255.255.0 {
+        range 192.232.3.16 192.232.3.32;
+        range 192.232.3.64 192.232.3.80;
+        option routers 192.232.3.1;
+        option broadcast-address 192.232.3.255;
+        option domain-name-servers 192.232.1.3; # DNS Server
+        default-lease-time 600;
+        max-lease-time 7200;
+}
+
+subnet 192.232.4.0 netmask 255.255.255.0 {
+        range 192.232.4.12 192.232.4.20;
+        range 192.232.4.160 192.232.4.168;
+        option routers 192.232.4.1;
+        option broadcast-address 192.232.4.255;
+        option domain-name-servers 192.232.1.3;
+        default-lease-time 600;
+        max-lease-time 7200;
+}
+```
 
 ## Soal-1
 Lakukan konfigurasi sesuai dengan peta yang sudah diberikan.
@@ -161,15 +215,83 @@ Lakukan konfigurasi sesuai dengan peta yang sudah diberikan.
 - Modify the topology with the configuration below:
 <img src="./img/1.png" width="500">
 
-## Soal-2
-Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32 dan [prefix IP].3.64 - [prefix IP].3.80 
+- Modify configuration for the DHCP Relay (Aura)
+```
+nano /etc/default/isc-dhcp-relay 
+```
+- Add this in the configuration:
+```
+SERVER = "192.232.1.2" #IP Himmel (DHCP Server)
+INTERFACES = "eth1 eth2 eth3 eth4"
+OPTIONS = ""
+```
+
+## Soal-2-3
+2. Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32 dan [prefix IP].3.64 - [prefix IP].3.80 
+3. Client yang melalui Switch4 mendapatkan range IP dari [prefix IP].4.12 - [prefix IP].4.20 dan [prefix IP].4.160 - [prefix IP].4.168 
 
 ### Explanation
+- Modify configuration for DHCP Server (Himmel) + fixed address
+```
+nano /etc/default/isc-dhcp-server
+```
+- Add this in the configuration:
+```
+INTERFACES v4 = "eth0"
+```
+- Modify DHCP configuration
+```
+nano /etc/dhcp/dhcpd.conf
+```
+```
+subnet 192.232.1.0 netmask 255.255.255.0{
+#    option routers 192.232.1.1;
+}
+
+subnet 192.232.2.0 netmask 255.255.255.0{
+#    option routers 192.232.2.1;
+}
+
+subnet 192.232.3.0 netmask 255.255.255.0 {
+        range 192.232.3.1
+        max-lease-time 7200;
+}
+host Lawine {
+	hardware ethernet c2:87:79:57:b1:05;
+	fixed-address 192.232.3.4;
+}
+
+host Linie {
+	hardware ethernet 3e:0e:25:e2:63:45;
+	fixed-address 192.232.3.5;
+}
+host Lugner {
+	hardware ethernet b6:2f:0e:2d:38:5a;
+	fixed-address 192.232.3.6;
+}
+```
+- Restart server
+```
+service isc-dhcp-server restart
+```
+- Check server status
+```
+service isc-dhcp-server status
+```
 
 ## Soal-3
 Client yang melalui Switch4 mendapatkan range IP dari [prefix IP].4.12 - [prefix IP].4.20 dan [prefix IP].4.160 - [prefix IP].4.168 
 
 ### Explanation
+- In Heiter, edit /etc/bind/named.conf.options
+- Restart server
+```
+service isc-dhcp-server restart
+```
+- In Client, edit /etc/resolv.conf and add:
+```
+nameserver 192.168.122.1
+```
 
 ## Soal-4
 Client mendapatkan DNS dari Heiter dan dapat terhubung dengan internet melalui DNS tersebut 
