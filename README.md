@@ -165,45 +165,48 @@ zone "granz.channel.I08.com" {
 	file "/etc/bind/jarkom/granz.channel.I08.com";
 };
 ```
-- create reverse domain
+- Modify the configuration as shown below:
 ```
-nano /etc/bind/named.conf.local
-```
-```
-zone "3.232.192.in-addr.arpa" {
-    type master;
-    file "/etc/bind/jarkom/3.232.192.in-addr.arpa";
-};
-```
-- Restart the server
-```
-service bind9 restart
+nano /etc/bind/jarkom/riegel.canyon.I08.com
 ```
 ```
-subnet 192.232.1.0 netmask 255.255.255.0 {}
-subnet 192.232.2.0 netmask 255.255.255.0 {}
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     riegel.canyon.I08.com. root.riegel.canyon.I08.com. (
+                        2023111301      ; Serial
+                        604800          ; Refresh
+                        86400           ; Retry
+                        2419200         ; Expire
+                        604800 )        ; Negative Cache TTL
+;
+@               IN      NS      riegel.canyon.I08.com.
+@               IN      A       192.232.4.4 ; IP Frieren Laravel Worker
+```
+```
+nano /etc/bind/jarkom/riegel.canyon.I08.com
+```
+```
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     granz.channel.I08.com.  root.granz.channel.I08.com.  (
+                        2023111301      ; Serial
+                        604800          ; Refresh
+                        86400           ; Retry
+                        2419200         ; Expire
+                        604800 )        ; Negative Cache TTL
+;
+@               IN      NS      granz.channel.I08.com.
+@               IN      A       102.232.3.4 ; IP Lawine PHP Worker
+```
 
-
-subnet 192.232.3.0 netmask 255.255.255.0 {
-        range 192.232.3.16 192.232.3.32;
-        range 192.232.3.64 192.232.3.80;
-        option routers 192.232.3.1;
-        option broadcast-address 192.232.3.255;
-        option domain-name-servers 192.232.1.3; # DNS Server
-        default-lease-time 600;
-        max-lease-time 7200;
-}
-
-subnet 192.232.4.0 netmask 255.255.255.0 {
-        range 192.232.4.12 192.232.4.20;
-        range 192.232.4.160 192.232.4.168;
-        option routers 192.232.4.1;
-        option broadcast-address 192.232.4.255;
-        option domain-name-servers 192.232.1.3;
-        default-lease-time 600;
-        max-lease-time 7200;
-}
+### Testing
+- Change IP in /etc/resolv.conf to the IP address of Heiter (DNS Server) and run host -t A to the domain:
 ```
+echo nameserver 10.55.1.2 > /etc/resolv.conf
+```
+<img src="./img/2.png" width="500">
 
 ## Soal-1
 Lakukan konfigurasi sesuai dengan peta yang sudah diberikan.
@@ -226,9 +229,8 @@ INTERFACES = "eth1 eth2 eth3 eth4"
 OPTIONS = ""
 ```
 
-## Soal-2-3
-2. Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32 dan [prefix IP].3.64 - [prefix IP].3.80 
-3. Client yang melalui Switch4 mendapatkan range IP dari [prefix IP].4.12 - [prefix IP].4.20 dan [prefix IP].4.160 - [prefix IP].4.168 
+## Soal-2
+Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32 dan [prefix IP].3.64 - [prefix IP].3.80 
 
 ### Explanation
 - Modify configuration for DHCP Server (Himmel) + fixed address
@@ -244,30 +246,42 @@ INTERFACES v4 = "eth0"
 nano /etc/dhcp/dhcpd.conf
 ```
 ```
-subnet 192.232.1.0 netmask 255.255.255.0{
-#    option routers 192.232.1.1;
-}
+subnet 192.232.1.0 netmask 255.255.255.0 {}
+subnet 192.232.2.0 netmask 255.255.255.0 {}
 
-subnet 192.232.2.0 netmask 255.255.255.0{
-#    option routers 192.232.2.1;
-}
 
 subnet 192.232.3.0 netmask 255.255.255.0 {
-        range 192.232.3.1
-        max-lease-time 7200;
+    range 192.232.3.16 192.232.3.32;
+    range 192.232.3.64 192.232.3.80;
+    option routers 192.232.3.1;
 }
-host Lawine {
-	hardware ethernet c2:87:79:57:b1:05;
-	fixed-address 192.232.3.4;
-}
+```
+- Restart server
+```
+service isc-dhcp-server restart
+```
+- Check server status
+```
+service isc-dhcp-server status
+```
 
-host Linie {
-	hardware ethernet 3e:0e:25:e2:63:45;
-	fixed-address 192.232.3.5;
-}
-host Lugner {
-	hardware ethernet b6:2f:0e:2d:38:5a;
-	fixed-address 192.232.3.6;
+## Soal-3
+Client yang melalui Switch4 mendapatkan range IP dari [prefix IP].4.12 - [prefix IP].4.20 dan [prefix IP].4.160 - [prefix IP].4.168 
+
+### Explanation
+- Same as question 2, Modify DHCP configuration
+```
+nano /etc/dhcp/dhcpd.conf
+```
+```
+subnet 192.232.1.0 netmask 255.255.255.0 {}
+subnet 192.232.2.0 netmask 255.255.255.0 {}
+
+
+subnet 192.232.3.0 netmask 255.255.255.0 {
+    range 192.232.3.16 192.232.3.32;
+    range 192.232.3.64 192.232.3.80;
+    option routers 192.232.3.1;
 }
 ```
 - Restart server
@@ -283,21 +297,34 @@ service isc-dhcp-server status
 Client mendapatkan DNS dari Heiter dan dapat terhubung dengan internet melalui DNS tersebut 
 
 ### Explanation
-- In Heiter, edit /etc/bind/named.conf.options
-- Restart server
+- Add the 'broadcast-address' and 'domain-name-servers' options in the dhcpd.conf
 ```
-service isc-dhcp-server restart
-```
-- In Client, edit /etc/resolv.conf and add:
-```
-nameserver 192.168.122.1
+subnet 192.232.1.0 netmask 255.255.255.0 {}
+subnet 192.232.2.0 netmask 255.255.255.0 {}
+
+
+subnet 192.232.3.0 netmask 255.255.255.0 {
+    range 192.232.3.16 192.232.3.32;
+    range 192.232.3.64 192.232.3.80;
+    option routers 192.232.3.1;
+    option broadcast-address 192.232.3.255;
+    option domain-name-servers 192.232.1.3;
+}
+
+subnet 192.232.4.0 netmask 255.255.255.0 {
+    range 192.232.4.12 192.232.4.20;
+    range 192.232.4.160 192.232.4.168;
+    option routers 192.232.4.1;
+    option broadcast-address 192.232.4.255;
+    option domain-name-servers 192.232.1.3;
+}
 ```
 
 ## Soal-5
 Lama waktu DHCP server meminjamkan alamat IP kepada Client yang melalui Switch3 selama 3 menit sedangkan pada client yang melalui Switch4 selama 12 menit. Dengan waktu maksimal yang dialokasikan untuk peminjaman alamat IP selama 96 menit 
 
 ### Explanation
-- In Himmel, edit /etc/dhcp/dhcpd.conf and edit the default-lease-time dan max-lease-time:
+- In Himmel, to add duration to the IP lease, additional configuration of 'default-lease-time' and 'max-lease-time' is required in the dhcpd.conf file:
 ```
 subnet 192.232.3.0 netmask 255.255.255.0 {
         range 192.232.3.16 192.232.3.32;
