@@ -279,8 +279,8 @@ service isc-dhcp-server restart
 service isc-dhcp-server status
 ```
 
-## Soal-3
-Client yang melalui Switch4 mendapatkan range IP dari [prefix IP].4.12 - [prefix IP].4.20 dan [prefix IP].4.160 - [prefix IP].4.168 
+## Soal-4
+Client mendapatkan DNS dari Heiter dan dapat terhubung dengan internet melalui DNS tersebut 
 
 ### Explanation
 - In Heiter, edit /etc/bind/named.conf.options
@@ -292,11 +292,6 @@ service isc-dhcp-server restart
 ```
 nameserver 192.168.122.1
 ```
-
-## Soal-4
-Client mendapatkan DNS dari Heiter dan dapat terhubung dengan internet melalui DNS tersebut 
-
-### Explanation
 
 ## Soal-5
 Lama waktu DHCP server meminjamkan alamat IP kepada Client yang melalui Switch3 selama 3 menit sedangkan pada client yang melalui Switch4 selama 12 menit. Dengan waktu maksimal yang dialokasikan untuk peminjaman alamat IP selama 96 menit 
