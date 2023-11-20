@@ -255,11 +255,11 @@ subnet 192.232.2.0 netmask 255.255.255.0 {}
 
 
 subnet 192.232.3.0 netmask 255.255.255.0 {
-    range 192.232.3.16 192.232.3.32;
-    range 192.232.3.64 192.232.3.80;
-    option routers 192.232.3.1;
-    option broadcast-address 192.232.3.255;
-    option domain-name-servers 192.232.1.3;
+    range 192.232.3.16 192.232.3.32;  # range ip untuk client
+    range 192.232.3.64 192.232.3.80;  # range ip untuk client
+    option routers 192.232.3.1;  # ip gateway switch3
+    option broadcast-address 192.232.3.255;  # mirip ip subnet dengan byte terakhir 255
+    option domain-name-servers 192.232.1.3;  # ip dns server
     default-lease-time 180;  # 3 menit
     max-lease-time 5760;    #96 menit
 }
@@ -287,11 +287,11 @@ subnet 192.232.2.0 netmask 255.255.255.0 {}
 
 
 subnet 192.232.3.0 netmask 255.255.255.0 {
-    range 192.232.3.16 192.232.3.32;
-    range 192.232.3.64 192.232.3.80;
-    option routers 192.232.3.1;
-    option broadcast-address 192.232.3.255;
-    option domain-name-servers 192.232.1.3;
+    range 192.232.3.16 192.232.3.32;  # range ip untuk client
+    range 192.232.3.64 192.232.3.80;  # range ip untuk client
+    option routers 192.232.3.1;  # ip gateway switch3
+    option broadcast-address 192.232.3.255;  # mirip ip subnet dengan byte terakhir 255
+    option domain-name-servers 192.232.1.3;  # ip dns server
     default-lease-time 180;  # 3 menit
     max-lease-time 5760;    #96 menit
 }
@@ -322,11 +322,13 @@ subnet 192.232.2.0 netmask 255.255.255.0 {}
 
 
 subnet 192.232.3.0 netmask 255.255.255.0 {
-    range 192.232.3.16 192.232.3.32;
-    range 192.232.3.64 192.232.3.80;
-    option routers 192.232.3.1;
-    option broadcast-address 192.232.3.255;
-    option domain-name-servers 192.232.1.3;
+    range 192.232.3.16 192.232.3.32;  # range ip untuk client
+    range 192.232.3.64 192.232.3.80;  # range ip untuk client
+    option routers 192.232.3.1;  # ip gateway switch3
+    option broadcast-address 192.232.3.255;  # mirip ip subnet dengan byte terakhir 255
+    option domain-name-servers 192.232.1.3;  # ip dns server
+    default-lease-time 180;  # 3 menit
+    max-lease-time 5760;    #96 menit
 }
 
 subnet 192.232.4.0 netmask 255.255.255.0 {
@@ -345,13 +347,13 @@ Lama waktu DHCP server meminjamkan alamat IP kepada Client yang melalui Switch3 
 - In Himmel, to add duration to the IP lease, additional configuration of 'default-lease-time' and 'max-lease-time' is required in the dhcpd.conf file:
 ```
 subnet 192.232.3.0 netmask 255.255.255.0 {
-        range 192.232.3.16 192.232.3.32;
-        range 192.232.3.64 192.232.3.80;
-        option routers 192.232.3.1;
-        option broadcast-address 192.232.3.255;
-        option domain-name-servers 192.232.1.3; # DNS Server
-        default-lease-time 180;
-        max-lease-time 5760;
+    range 192.232.3.16 192.232.3.32;  # range ip untuk client
+    range 192.232.3.64 192.232.3.80;  # range ip untuk client
+    option routers 192.232.3.1;  # ip gateway switch3
+    option broadcast-address 192.232.3.255;  # mirip ip subnet dengan byte terakhir 255
+    option domain-name-servers 192.232.1.3;  # ip dns server
+    default-lease-time 180;  # 3 menit
+    max-lease-time 5760;    #96 menit
 }
 
 subnet 192.232.4.0 netmask 255.255.255.0 {
