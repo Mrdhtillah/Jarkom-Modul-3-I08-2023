@@ -184,7 +184,7 @@ $TTL    604800
 @               IN      A       192.232.4.4 ; IP Frieren Laravel Worker
 ```
 ```
-nano /etc/bind/jarkom/riegel.canyon.I08.com
+nano /etc/bind/jarkom/granz.channel.I08.com
 ```
 ```
 ; BIND data file for local loopback interface
