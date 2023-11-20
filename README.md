@@ -204,7 +204,7 @@ $TTL    604800
 ### Testing
 - Change IP in /etc/resolv.conf to the IP address of Heiter (DNS Server) and run host -t A to the domain:
 ```
-echo nameserver 10.55.1.2 > /etc/resolv.conf
+echo nameserver 192.232.1.2 > /etc/resolv.conf
 ```
 <img src="./img/2.png" width="500">
 
