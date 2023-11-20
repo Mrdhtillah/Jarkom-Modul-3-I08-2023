@@ -206,6 +206,10 @@ $TTL    604800
 ```
 echo nameserver 192.232.1.3 > /etc/resolv.conf
 ```
+```
+host -t A riegel.canyon.I08.com
+host -t A granz.channel.I08.com
+```
 <img src="./img/2.png" width="500">
 
 ## Soal-1
