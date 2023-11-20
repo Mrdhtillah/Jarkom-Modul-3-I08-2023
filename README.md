@@ -290,6 +290,16 @@ subnet 192.232.3.0 netmask 255.255.255.0 {
     range 192.232.3.16 192.232.3.32;
     range 192.232.3.64 192.232.3.80;
     option routers 192.232.3.1;
+    option broadcast-address 192.232.3.255;
+    option domain-name-servers 192.232.1.3;
+    default-lease-time 180;  # 3 menit
+    max-lease-time 5760;    #96 menit
+}
+
+subnet 192.232.4.0 netmask 255.255.255.0 {
+    range 192.232.4.12 192.232.4.20;
+    range 192.232.4.160 192.232.4.168;
+    option routers 192.232.4.1;
 }
 ```
 - Restart server
