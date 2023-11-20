@@ -375,7 +375,7 @@ service isc-dhcp-server restart
 service isc-dhcp-server status
 ```
 ### Testing
-- Change IP static to IP dynamic
+- In Client, change IP static to IP dynamic
 ```
 echo '
 auto eth0
